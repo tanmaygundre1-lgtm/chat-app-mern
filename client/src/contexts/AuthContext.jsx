@@ -4,7 +4,6 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -28,10 +27,9 @@ import { ROUTES, STORAGE_KEYS } from '../utils/constants.js';
  *     here (not in pages) so every entry point (login form, register
  *     form, deep-link with stale token) ends up in the same place.
  *
- * Why a ref guards the bootstrap fetch:
- *   In React 18+ Strict Mode every effect runs twice in development.
- *   Without `bootstrappedRef`, the dev server would issue two parallel
- *   `/auth/me` calls and produce a brief race-condition flash.
+ * React Strict Mode replays effects in development. The bootstrap is a
+ * read-only request, so it is safe to replay; cleanup prevents the first
+ * setup from updating state after it has been superseded.
  */
 
 const AuthContext = createContext(null);
@@ -59,8 +57,6 @@ export const AuthProvider = ({ children }) => {
   // guards check this so we don't redirect a logged-in user to /login
   // during the half-second it takes the server to reply.
   const [loading, setLoading] = useState(Boolean(readToken()));
-
-  const bootstrappedRef = useRef(false);
 
   /**
    * Apply a successful login/register response: persist the token,
@@ -173,9 +169,6 @@ export const AuthProvider = ({ children }) => {
 
   /* ---------- Bootstrap on mount ---------- */
   useEffect(() => {
-    if (bootstrappedRef.current) return;
-    bootstrappedRef.current = true;
-
     const storedToken = readToken();
     if (!storedToken) {
       setLoading(false);
