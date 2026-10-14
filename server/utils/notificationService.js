@@ -146,7 +146,7 @@ export const persistMessageNotification = async ({
           createdAt: new Date(),
         },
       },
-      { new: true },
+      { returnDocument: 'after' },
     ).lean();
     return updated;
   }
@@ -212,7 +212,7 @@ export const markNotificationRead = async ({ notificationId, userId }) => {
   const updated = await Notification.findOneAndUpdate(
     { _id: nid, recipient: uid },
     { $set: { isRead: true } },
-    { new: true },
+    { returnDocument: 'after' },
   ).lean();
 
   if (!updated) throw ApiError.notFound('Notification not found');

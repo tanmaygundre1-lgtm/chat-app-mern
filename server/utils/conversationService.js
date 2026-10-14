@@ -118,7 +118,7 @@ export const incrementUnread = async (conversationId, recipientIds) => {
   return Conversation.findByIdAndUpdate(
     cid,
     { $inc: inc },
-    { new: true },
+    { returnDocument: 'after' },
   );
 };
 
@@ -135,7 +135,7 @@ export const resetUnread = async (conversationId, userId) => {
   return Conversation.findByIdAndUpdate(
     cid,
     { $set: { [`unreadCounts.${uid}`]: 0 } },
-    { new: true },
+    { returnDocument: 'after' },
   );
 };
 

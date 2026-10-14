@@ -68,7 +68,10 @@ export const registerSocketHandlers = (io) => {
       const updated = await User.findByIdAndUpdate(
         userId,
         { isOnline: true, lastSeenAt: new Date() },
-        { new: true, projection: 'preferences.showOnlineStatus' },
+        {
+          returnDocument: 'after',
+          projection: 'preferences.showOnlineStatus',
+        },
       ).lean();
 
       const showOnlineStatus =

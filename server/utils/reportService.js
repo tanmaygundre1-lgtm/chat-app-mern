@@ -339,7 +339,7 @@ export const reviewReport = async ({
         reviewNote: safeNote,
       },
     },
-    { new: true, runValidators: true },
+    { returnDocument: 'after', runValidators: true },
   )
     .populate({ path: 'reporter', select: '_id username displayName avatarUrl' })
     .populate({ path: 'reviewedBy', select: '_id username displayName' })

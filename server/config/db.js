@@ -4,9 +4,9 @@ import { env } from './env.js';
 export const connectDB = async () => {
   try {
     mongoose.set('strictQuery', true);
-
+    
     const conn = await mongoose.connect(env.MONGO_URI, {
-      serverSelectionTimeoutMS: 10_000,
+      family: 4,
     });
 
     // Avoid logging the URI — it can contain credentials.

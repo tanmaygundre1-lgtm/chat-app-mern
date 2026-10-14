@@ -157,7 +157,7 @@ export const updatePreferences = asyncHandler(async (req, res) => {
   const updated = await User.findByIdAndUpdate(
     req.user._id,
     { $set },
-    { new: true, runValidators: true },
+    { returnDocument: 'after', runValidators: true },
   ).lean();
 
   if (!updated) throw ApiError.unauthorized('User no longer exists');

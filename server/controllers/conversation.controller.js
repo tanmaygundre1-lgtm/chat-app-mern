@@ -470,7 +470,7 @@ const removeParticipant = async ({ conversation, targetId }) => {
         $unset: { [`unreadCounts.${tid}`]: '' },
         $set: { isActive: false },
       },
-      { new: true },
+      { returnDocument: 'after' },
     );
   }
 
@@ -484,7 +484,7 @@ const removeParticipant = async ({ conversation, targetId }) => {
         $unset: { [`unreadCounts.${tid}`]: '' },
         $set: { isActive: false },
       },
-      { new: true },
+      { returnDocument: 'after' },
     );
   }
 
@@ -505,7 +505,9 @@ const removeParticipant = async ({ conversation, targetId }) => {
     update.$addToSet = { admins: remaining[0] };
   }
 
-  return Conversation.findByIdAndUpdate(conversation._id, update, { new: true });
+  return Conversation.findByIdAndUpdate(conversation._id, update, {
+    returnDocument: 'after',
+  });
 };
 
 // DELETE /api/conversations/:id/members/:userId
@@ -608,7 +610,7 @@ export const promoteAdmin = asyncHandler(async (req, res) => {
   const updated = await Conversation.findByIdAndUpdate(
     conversation._id,
     { $addToSet: { admins: new Types.ObjectId(userId) } },
-    { new: true },
+    { returnDocument: 'after' },
   ).populate({ path: 'participants', select: PARTICIPANT_PROJECTION });
 
   const io = req.app.get('io');
@@ -665,7 +667,7 @@ export const demoteAdmin = asyncHandler(async (req, res) => {
   const updated = await Conversation.findByIdAndUpdate(
     conversation._id,
     { $pull: { admins: new Types.ObjectId(userId) } },
-    { new: true },
+    { returnDocument: 'after' },
   ).populate({ path: 'participants', select: PARTICIPANT_PROJECTION });
 
   const io = req.app.get('io');

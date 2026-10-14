@@ -128,9 +128,12 @@ export const SocketProvider = ({ children }) => {
 
     const instance = io(SOCKET_URL, {
       auth: { token },
-      transports: ['websocket'],
+      transports: ['websocket', 'polling'],
+      withCredentials: true,
+      reconnection: true,
       reconnectionAttempts: 5,
       reconnectionDelay: 2000,
+      reconnectionDelayMax: 10000,
       // Auto-connects by default; we keep that so the first frame
       // after login attempts the handshake immediately.
     });
